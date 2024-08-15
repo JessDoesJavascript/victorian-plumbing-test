@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import axios from "axios";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, styled } from "@mui/material";
 import { ProductCard } from "./components/ProductCard";
 import { ColourOption, FilterByColour } from "./components/FilterByColour";
 import _ from "lodash";
@@ -12,16 +12,25 @@ export interface SelectedColourOption {
   value: string;
 }
 
+const StyledButton = styled(Button)`
+  background-color: white;
+  margin: 8px;
+  color: #242424;
+  &:hover {
+    background-color: #646464;
+  }
+`;
+
 function App() {
   const [products, setProducts] = useState<any[]>();
   const [colourOptions, setColourOptions] = useState<any[]>([]);
 
   const [productType, setProductType] = useState("");
-  const [colour, setColour] = useState();
 
-  const handleClickGetProducts = (product: string) => {
+  const handleClickGetProducts = (product: string, colourOption?: ColourOption) => {
     setProductType(product);
-    fetch(product);
+    setColourOptions([])
+    fetch(product, colourOption);
   };
 
   const fetch = (product: string, colourOption?: ColourOption) => {
@@ -62,7 +71,6 @@ function App() {
 
         const colourOptionsFromResponse = getColourOptions(response.data);
         setColourOptions(colourOptionsFromResponse);
-        console.log(response);
       })
       .catch(function (error) {
         console.log(error);
@@ -70,26 +78,49 @@ function App() {
   };
   return (
     <>
-      <Button onClick={() => handleClickGetProducts("tiles")}>
-        Look at some tiles!
-      </Button>
-      <Grid container>
-        <Grid item xs={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={4} md={2}>
           <FilterByColour
             colourOptions={colourOptions}
-            fetchWithColours={fetch}
+            fetch={handleClickGetProducts}
             productType={productType}
           />
         </Grid>
-        <Grid container item xs={10}>
-          {products &&
-            products.map((product: any) => {
-              return (
-                <Grid item xs={12} sm={6} md={4}>
-                  <ProductCard product={product} />
-                </Grid>
-              );
-            })}
+        <Grid container item xs={8} md={10}>
+          <Grid item xs={12} textAlign="left">
+            <h2>What would you like to look at?</h2>
+            <StyledButton onClick={() => handleClickGetProducts("tiles")}>
+              Tiles
+            </StyledButton>
+            <StyledButton onClick={() => handleClickGetProducts("toilets")}>
+              Toilets
+            </StyledButton>
+            <StyledButton onClick={() => handleClickGetProducts("showers")}>
+              Showers
+            </StyledButton>
+            <StyledButton onClick={() => handleClickGetProducts("baths")}>
+              Baths
+            </StyledButton>
+            <StyledButton onClick={() => handleClickGetProducts("basins")}>
+              Basins
+            </StyledButton>
+            <StyledButton onClick={() => handleClickGetProducts("taps")}>
+              Taps
+            </StyledButton>
+          </Grid>
+
+          <Grid container spacing={2}>
+            <Grid container item xs={12} spacing={2}>
+              {products &&
+                products.map((product: any) => {
+                  return (
+                    <Grid item xs={12} sm={6} md={4} alignItems="stretch">
+                      <ProductCard product={product} />
+                    </Grid>
+                  );
+                })}
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </>
