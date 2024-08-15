@@ -13,17 +13,14 @@ interface ColourOptionsProps {
 interface FilterByColourProps {
   colourOptions: ColourOptionsProps[];
   fetchWithColours: (product: string, colourOptions?: SelectedColourOption[]) => void;
+  productType: string
 }
 
 export function FilterByColour(props: FilterByColourProps) {
-  const [selectedColours, setSelectedColours] = useState<
-    SelectedColourOption[]
-  >([]);
-  const { colourOptions } = props;
-  const handleCheckboxChecked = (e: any) => {
-    setSelectedColours((prevItems) => [...prevItems, ...e.target.value]);
-    console.log(e)
-    console.log(selectedColours);
+
+  const { colourOptions, fetchWithColours, productType } = props;
+  const handleColourClick = (colourOption: SelectedColourOption) => {
+    fetchWithColours(productType, [colourOption]);
   };
 
   return (
@@ -32,16 +29,12 @@ export function FilterByColour(props: FilterByColourProps) {
       <ul>
         {colourOptions.map((option) => (
           <li key={option.identifier}>
-            <Checkbox
-              value={{ identifier: option.identifier, value: option.value }}
-              id={option.identifier}
-              onChange={(e:any) => handleCheckboxChecked(e)}
-            />
-            <label htmlFor={option.identifier}>{option.displayValue}</label>
+          
+            <button onClick={() => handleColourClick(option)}>{option.displayValue}</button>
           </li>
         ))}
       </ul>
-      {/* <Button onClick={() => searchForSelectedColours()}>Search</Button> */}
+    
     </div>
   );
 }
