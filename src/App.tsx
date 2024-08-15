@@ -3,7 +3,7 @@ import "./App.css";
 import axios from "axios";
 import { Button, Grid } from "@mui/material";
 import { ProductCard } from "./components/ProductCard";
-import { FilterByColour } from "./components/FilterByColour";
+import { ColourOption, FilterByColour } from "./components/FilterByColour";
 import _ from "lodash";
 import { getColourOptions } from "./utils";
 
@@ -19,24 +19,35 @@ function App() {
   const [productType, setProductType] = useState("");
   const [colour, setColour] = useState();
 
-  const handleClickGetProducts = (e: any) => {
-    console.log(e);
-    setProductType(e.target.textContent);
-    fetch(e.target.textContent);
+  const handleClickGetProducts = (product: string) => {
+    setProductType(product);
+    fetch(product);
   };
 
-  const fetch = (product: string, colourOptions?: SelectedColourOption[]) => {
-    const query: any = {
+  const fetch = (product: string, colourOption?: ColourOption) => {
+    let query: any = {
       query: product,
       pageNumber: 0,
       size: 0,
       additionalPages: 0,
       sort: 1,
     };
-    if (colourOptions) {
-      query.facets = { 
-        colour: colourOptions
-      }
+    if (colourOption) {
+      query = {
+        query: product,
+        pageNumber: 0,
+        size: 0,
+        additionalPages: 0,
+        sort: 1,
+        facets: {
+          colour: [
+            {
+              identifier: colourOption?.identifier,
+              value: colourOption?.value,
+            },
+          ],
+        },
+      };
     }
     axios
       .post(
@@ -54,17 +65,14 @@ function App() {
         console.log(response);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
-      })
-      .finally(function () {
-        // always executed
       });
   };
-
   return (
     <>
-      <Button onClick={(e: any) => handleClickGetProducts(e)}>tiles</Button>
+      <Button onClick={() => handleClickGetProducts("tiles")}>
+        Look at some tiles!
+      </Button>
       <Grid container>
         <Grid item xs={2}>
           <FilterByColour
