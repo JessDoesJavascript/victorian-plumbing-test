@@ -24,12 +24,21 @@ const StyledButton = styled(Button)`
 function App() {
   const [products, setProducts] = useState<any[]>();
   const [colourOptions, setColourOptions] = useState<any[]>([]);
-
   const [productType, setProductType] = useState("");
-
-  const handleClickGetProducts = (product: string, colourOption?: ColourOption) => {
+  const productTypes = [
+    "tiles",
+    "toilets",
+    "showers",
+    "baths",
+    "basins",
+    "taps",
+  ];
+  const handleClickGetProducts = (
+    product: string,
+    colourOption?: ColourOption,
+  ) => {
     setProductType(product);
-    setColourOptions([])
+    setColourOptions([]);
     fetch(product, colourOption);
   };
 
@@ -89,24 +98,14 @@ function App() {
         <Grid container item xs={8} md={10}>
           <Grid item xs={12} textAlign="left">
             <h2>What would you like to look at?</h2>
-            <StyledButton onClick={() => handleClickGetProducts("tiles")}>
-              Tiles
-            </StyledButton>
-            <StyledButton onClick={() => handleClickGetProducts("toilets")}>
-              Toilets
-            </StyledButton>
-            <StyledButton onClick={() => handleClickGetProducts("showers")}>
-              Showers
-            </StyledButton>
-            <StyledButton onClick={() => handleClickGetProducts("baths")}>
-              Baths
-            </StyledButton>
-            <StyledButton onClick={() => handleClickGetProducts("basins")}>
-              Basins
-            </StyledButton>
-            <StyledButton onClick={() => handleClickGetProducts("taps")}>
-              Taps
-            </StyledButton>
+            {productTypes.map((product) => (
+              <StyledButton
+                key={product}
+                onClick={() => handleClickGetProducts(product)}
+              >
+                {product.charAt(0).toUpperCase() + product.slice(1)}
+              </StyledButton>
+            ))}
           </Grid>
 
           <Grid container spacing={2}>
